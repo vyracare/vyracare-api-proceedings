@@ -1,6 +1,6 @@
 {
   "consumerMfe": {
-    "repositoryFullName": "[consumer-mfe-full-name-generic]",
+    "repositoryFullName": "vyracare/vyracare-app-proceedings-mfe",
     "environmentFiles": [
       "src/environments/environments.ts"
     ],

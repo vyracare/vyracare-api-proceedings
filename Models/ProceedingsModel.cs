@@ -1,9 +1,9 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace [assembly-generic].Models;
+namespace Vyracare.Api.Proceedings.Models;
 
-public class [resource-generic]Model
+public class ProceedingsModel
 {
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]

@@ -1,17 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
-using [assembly-generic].DTOS;
-using [assembly-generic].Models;
-using [assembly-generic].Services;
+using Vyracare.Api.Proceedings.DTOS;
+using Vyracare.Api.Proceedings.Models;
+using Vyracare.Api.Proceedings.Services;
 
-namespace [assembly-generic].Controllers;
+namespace Vyracare.Api.Proceedings.Controllers;
 
 [ApiController]
-[Route("api/[table-route-generic]")]
-public class [resource-generic]Controller : ControllerBase
+[Route("api/proceedings")]
+public class ProceedingsController : ControllerBase
 {
-    private readonly [resource-generic]Service _service;
+    private readonly ProceedingsService _service;
 
-    public [resource-generic]Controller([resource-generic]Service service)
+    public ProceedingsController(ProceedingsService service)
     {
         _service = service;
     }
@@ -31,9 +31,9 @@ public class [resource-generic]Controller : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] Create[resource-generic]Request request)
+    public async Task<IActionResult> Create([FromBody] CreateProceedingsRequest request)
     {
-        var item = new [resource-generic]Model
+        var item = new ProceedingsModel
         {
             Name = request.Name,
             Description = request.Description

@@ -5,20 +5,20 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using System.Text;
-using [assembly-generic].Services;
+using Vyracare.Api.Proceedings.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 var mongoUri = configuration["Mongo:ConnectionString"] ?? Environment.GetEnvironmentVariable("MONGO_URI") ?? "mongodb://localhost:27017";
-var mongoDatabase = configuration["Mongo:Database"] ?? "[database-generic]";
+var mongoDatabase = configuration["Mongo:Database"] ?? "vyracare_db";
 var corsAllowedOriginsRaw = configuration["Cors:AllowedOrigins"] ?? Environment.GetEnvironmentVariable("CORS_ALLOWED_ORIGINS") ?? "*";
 var corsAllowedOrigins = corsAllowedOriginsRaw
     .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
-var jwtKey = configuration["Jwt:Key"] ?? Environment.GetEnvironmentVariable("JWT_KEY") ?? "[jwt-key-generic]";
-var jwtIssuer = configuration["Jwt:Issuer"] ?? Environment.GetEnvironmentVariable("JWT_ISSUER") ?? "[jwt-issuer-generic]";
-var jwtAudience = configuration["Jwt:Audience"] ?? Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? "[jwt-audience-generic]";
+var jwtKey = configuration["Jwt:Key"] ?? Environment.GetEnvironmentVariable("JWT_KEY") ?? "sQAn6C4A9uMUjbXVvXGVdrHQVxYKo57x2WxEgmSFQBY=";
+var jwtIssuer = configuration["Jwt:Issuer"] ?? Environment.GetEnvironmentVariable("JWT_ISSUER") ?? "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_yZNKvAZTf";
+var jwtAudience = configuration["Jwt:Audience"] ?? Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? "424aitrab2nma4ttgi0314dfst";
 
 builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(mongoUri));
 builder.Services.AddScoped(sp => sp.GetRequiredService<IMongoClient>().GetDatabase(mongoDatabase));
@@ -64,9 +64,9 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "[repo-generic]",
+        Title = "vyracare-api-proceedings",
         Version = "v1",
-        Description = "[description-generic]"
+        Description = "API responsável por administrar os procedimentos"
     });
 
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -96,14 +96,14 @@ builder.Services.AddSwaggerGen(options =>
 });
 builder.Services.AddAWSLambdaHosting(LambdaEventSource.HttpApi);
 
-builder.Services.AddScoped<[resource-generic]Service>();
+builder.Services.AddScoped<ProceedingsService>();
 
 var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "[repo-generic] v1");
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "vyracare-api-proceedings v1");
     options.RoutePrefix = "swagger";
 });
 app.UseHttpsRedirection();

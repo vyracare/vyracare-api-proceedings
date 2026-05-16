@@ -1,14 +1,14 @@
-[repo-generic] (.NET 8) - MongoDB + AWS Lambda
+vyracare-api-proceedings (.NET 8) - MongoDB + AWS Lambda
 -----------------------------------------------
 
 Descricao:
-  - [description-generic]
+  - API responsável por administrar os procedimentos
 
 Recursos iniciais:
   - Projeto .NET 8 preparado para AWS Lambda
-  - MongoDB configurado com database `[database-generic]`
-  - Controller inicial para a collection `[table-generic]`
-  - Rotas base publicadas em `/api/[table-route-generic]`
+  - MongoDB configurado com database `vyracare_db`
+  - Controller inicial para a collection `proceedings`
+  - Rotas base publicadas em `/api/proceedings`
   - Swagger habilitado em `/swagger/index.html`
   - CORS configurado por default para nao bloquear integracoes
   - JWT obrigatorio em todos os endpoints da API
