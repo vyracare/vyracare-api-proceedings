@@ -36,7 +36,15 @@ public class ProceedingsController : ControllerBase
         var item = new ProceedingsModel
         {
             Name = request.Name,
-            Description = request.Description
+            Category = request.Category,
+            Code = request.Code,
+            TargetArea = request.TargetArea,
+            DurationMinutes = request.DurationMinutes,
+            SessionPrice = request.SessionPrice,
+            SessionCount = request.SessionCount,
+            RecoveryTime = request.RecoveryTime,
+            Description = request.Description,
+            Active = request.Active
         };
 
         await _service.CreateAsync(item);
