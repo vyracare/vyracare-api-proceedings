@@ -5,9 +5,11 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using System.Text;
+using Vyracare.Api.Proceedings.Infrastructure;
 using Vyracare.Api.Proceedings.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+await SecretsManagerBootstrapper.ApplyAsync(builder.Configuration);
 var configuration = builder.Configuration;
 
 var mongoUri = configuration["Mongo:ConnectionString"] ?? Environment.GetEnvironmentVariable("MONGO_URI") ?? "mongodb://localhost:27017";
@@ -16,7 +18,7 @@ var corsAllowedOriginsRaw = configuration["Cors:AllowedOrigins"] ?? Environment.
 var corsAllowedOrigins = corsAllowedOriginsRaw
     .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
-var jwtKey = configuration["Jwt:Key"] ?? Environment.GetEnvironmentVariable("JWT_KEY") ?? "sQAn6C4A9uMUjbXVvXGVdrHQVxYKo57x2WxEgmSFQBY=";
+var jwtKey = configuration["Jwt:Key"] ?? Environment.GetEnvironmentVariable("JWT_KEY") ?? throw new InvalidOperationException("Jwt:Key nao configurado.");
 var jwtIssuer = configuration["Jwt:Issuer"] ?? Environment.GetEnvironmentVariable("JWT_ISSUER") ?? "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_yZNKvAZTf";
 var jwtAudience = configuration["Jwt:Audience"] ?? Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? "424aitrab2nma4ttgi0314dfst";
 
