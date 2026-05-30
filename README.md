@@ -140,15 +140,17 @@ Arquivo principal:
 
 Exemplo das configuracoes versionadas:
 
-- `Mongo:ConnectionString`
 - `Mongo:Database`
-- `Jwt:Key`
 - `Jwt:Issuer`
 - `Jwt:Audience`
+- `Secrets:MongoSecretName`
+- `Secrets:JwtSecretName`
 
 Variaveis de ambiente suportadas no deploy:
 
 - `MONGO_URI`
+- `MONGO_SECRET_NAME`
+- `JWT_SECRET_NAME`
 - `JWT_KEY`
 - `JWT_ISSUER`
 - `JWT_AUDIENCE`
@@ -196,3 +198,4 @@ No GitHub Actions, o projeto depende da esteira reutilizavel do repositório de 
 - publicar a API no API Gateway;
 - expor Swagger;
 - atualizar o MFE consumidor quando configurado.
+- ler credenciais de banco e chave JWT a partir do AWS Secrets Manager.
