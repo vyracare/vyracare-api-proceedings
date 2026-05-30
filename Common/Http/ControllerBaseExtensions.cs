@@ -3,6 +3,9 @@ using Vyracare.Api.Proceedings.Common.Results;
 
 namespace Vyracare.Api.Proceedings.Common.Http;
 
+/// <summary>
+/// Centraliza extens?es reutiliz?veis usadas pela aplica??o.
+/// </summary>
 public static class ControllerBaseExtensions
 {
     public static IActionResult ToActionResult<T>(

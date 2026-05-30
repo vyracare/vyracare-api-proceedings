@@ -5,27 +5,42 @@ using Vyracare.Api.Proceedings.Infrastructure.Persistence.Documents;
 
 namespace Vyracare.Api.Proceedings.Infrastructure.Persistence;
 
+/// <summary>
+/// Implementa a integra??o com a persist?ncia ou com uma depend?ncia externa da aplica??o.
+/// </summary>
 public sealed class MongoProceedingRepository : IProceedingRepository
 {
     private readonly IMongoCollection<ProceedingDocument> _collection;
 
+/// <summary>
+/// Inicializa uma nova inst?ncia de MongoProceedingRepository.
+/// </summary>
     public MongoProceedingRepository(IMongoDatabase database)
     {
         _collection = database.GetCollection<ProceedingDocument>("proceedings");
     }
 
+/// <summary>
+/// Recupera a cole??o de registros dispon?veis para esta feature.
+/// </summary>
     public async Task<IReadOnlyCollection<Proceeding>> ListAsync()
     {
         var documents = await _collection.Find(Builders<ProceedingDocument>.Filter.Empty).ToListAsync();
         return documents.Select(MapToDomain).ToArray();
     }
 
+/// <summary>
+/// Recupera um registro espec?fico a partir do seu identificador.
+/// </summary>
     public async Task<Proceeding?> GetByIdAsync(string id)
     {
         var document = await _collection.Find(item => item.Id == id).FirstOrDefaultAsync();
         return document is null ? null : MapToDomain(document);
     }
 
+/// <summary>
+/// Persiste um novo registro e devolve a entidade resultante da opera??o.
+/// </summary>
     public async Task<Proceeding> AddAsync(Proceeding proceeding)
     {
         var document = MapToDocument(proceeding);
