@@ -1,6 +1,6 @@
-namespace Vyracare.Api.Proceedings.DTOS;
+namespace Vyracare.Api.Proceedings.Features.Proceedings.Create;
 
-public record CreateProceedingsRequest(
+public sealed record CreateProceedingRequest(
     string Name,
     string Category,
     string Code,
