@@ -9,13 +9,13 @@ namespace Vyracare.Api.Proceedings.Features.Proceedings;
 [ApiController]
 [Route("api/proceedings")]
 /// <summary>
-/// Exp?e os endpoints HTTP desta feature e delega o processamento para os handlers da aplica??o.
+/// Expõe os endpoints HTTP da feature e delega o processamento aos handlers da aplicação.
 /// </summary>
 public sealed class ProceedingsController : ControllerBase
 {
     [HttpGet]
 /// <summary>
-/// Executa a responsabilidade associada a g et al l.
+/// Executa a responsabilidade do método G et Al l.
 /// </summary>
     public async Task<IActionResult> GetAll([FromServices] ListProceedingsHandler handler)
     {
@@ -25,7 +25,7 @@ public sealed class ProceedingsController : ControllerBase
 
     [HttpGet("{id}")]
 /// <summary>
-/// Executa a responsabilidade associada a g et by id.
+/// Executa a responsabilidade do método G et By Id.
 /// </summary>
     public async Task<IActionResult> GetById(string id, [FromServices] GetProceedingByIdHandler handler)
     {
@@ -35,7 +35,7 @@ public sealed class ProceedingsController : ControllerBase
 
     [HttpPost]
 /// <summary>
-/// Executa a responsabilidade associada a c re at e.
+/// Executa a responsabilidade do método C re at e.
 /// </summary>
     public async Task<IActionResult> Create([FromBody] CreateProceedingRequest request, [FromServices] CreateProceedingHandler handler)
     {

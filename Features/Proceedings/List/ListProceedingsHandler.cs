@@ -5,14 +5,14 @@ using Vyracare.Api.Proceedings.Features.Proceedings.Shared.Ports;
 namespace Vyracare.Api.Proceedings.Features.Proceedings.List;
 
 /// <summary>
-/// Implementa a regra de neg?cio do caso de uso representado por esta pasta.
+/// Implementa o caso de uso correspondente a esta feature.
 /// </summary>
 public sealed class ListProceedingsHandler
 {
     private readonly IProceedingRepository _repository;
 
 /// <summary>
-/// Inicializa uma nova inst?ncia de ListProceedingsHandler.
+/// Inicializa uma nova instância de ListProceedingsHandler.
 /// </summary>
     public ListProceedingsHandler(IProceedingRepository repository)
     {
@@ -20,7 +20,7 @@ public sealed class ListProceedingsHandler
     }
 
 /// <summary>
-/// Executa o caso de uso e devolve o resultado padronizado da opera??o.
+/// Executa o caso de uso e devolve o resultado padronizado da operação.
 /// </summary>
     public async Task<UseCaseResult<IReadOnlyCollection<Proceeding>>> HandleAsync()
     {

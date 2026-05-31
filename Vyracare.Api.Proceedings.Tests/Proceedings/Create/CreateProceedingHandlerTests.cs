@@ -7,13 +7,13 @@ using Vyracare.Api.Proceedings.Features.Proceedings.Shared.Ports;
 namespace Vyracare.Api.Proceedings.Tests.Proceedings.Create;
 
 /// <summary>
-/// Agrupa os cen?rios de teste unit?rio relacionados a este componente.
+/// Representa o componente CreateProceedingHandlerTests da aplicação.
 /// </summary>
 public sealed class CreateProceedingHandlerTests
 {
     [Fact]
 /// <summary>
-/// Executa a responsabilidade associada a d ev e r et or na r v al id ac ao q ua nd o n om e n ao f or i nf or ma do.
+/// Executa a responsabilidade do método D ev e_r et or na r_v al id ac ao_q ua nd o_n om e_n ao_f or_i nf or ma do.
 /// </summary>
     public async Task Deve_retornar_validacao_quando_nome_nao_for_informado()
     {
@@ -27,7 +27,7 @@ public sealed class CreateProceedingHandlerTests
 
     [Fact]
 /// <summary>
-/// Executa a responsabilidade associada a d ev e c ri ar p ro ce di me nt o q ua nd o p ay lo ad f or v al id o.
+/// Executa a responsabilidade do método D ev e_c ri ar_p ro ce di me nt o_q ua nd o_p ay lo ad_f or_v al id o.
 /// </summary>
     public async Task Deve_criar_procedimento_quando_payload_for_valido()
     {
@@ -43,12 +43,12 @@ public sealed class CreateProceedingHandlerTests
     private sealed class FakeProceedingRepository : IProceedingRepository
     {
 /// <summary>
-/// Obt?m ou define i te ms.
+/// Obtém ou define a coleção de itens usada no contexto do teste.
 /// </summary>
         public List<Proceeding> Items { get; } = [];
 
 /// <summary>
-/// Persiste um novo registro e devolve a entidade resultante da opera??o.
+/// Persiste um novo registro e devolve a entidade resultante da operação.
 /// </summary>
         public Task<Proceeding> AddAsync(Proceeding proceeding)
         {
@@ -58,12 +58,12 @@ public sealed class CreateProceedingHandlerTests
         }
 
 /// <summary>
-/// Recupera um registro espec?fico a partir do seu identificador.
+/// Recupera um registro específico a partir do identificador informado.
 /// </summary>
         public Task<Proceeding?> GetByIdAsync(string id) => Task.FromResult(Items.FirstOrDefault(item => item.Id == id));
 
 /// <summary>
-/// Recupera a cole??o de registros dispon?veis para esta feature.
+/// Recupera a coleção de registros disponíveis para a feature.
 /// </summary>
         public Task<IReadOnlyCollection<Proceeding>> ListAsync() => Task.FromResult<IReadOnlyCollection<Proceeding>>(Items);
     }

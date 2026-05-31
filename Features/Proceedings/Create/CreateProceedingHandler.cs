@@ -6,7 +6,7 @@ using Vyracare.Api.Proceedings.Features.Proceedings.Shared.Ports;
 namespace Vyracare.Api.Proceedings.Features.Proceedings.Create;
 
 /// <summary>
-/// Implementa a regra de neg?cio do caso de uso representado por esta pasta.
+/// Implementa o caso de uso correspondente a esta feature.
 /// </summary>
 public sealed class CreateProceedingHandler
 {
@@ -14,7 +14,7 @@ public sealed class CreateProceedingHandler
     private readonly IClock _clock;
 
 /// <summary>
-/// Inicializa uma nova inst?ncia de CreateProceedingHandler.
+/// Inicializa uma nova instância de CreateProceedingHandler.
 /// </summary>
     public CreateProceedingHandler(IProceedingRepository repository, IClock clock)
     {
@@ -23,7 +23,7 @@ public sealed class CreateProceedingHandler
     }
 
 /// <summary>
-/// Executa o caso de uso e devolve o resultado padronizado da opera??o.
+/// Executa o caso de uso e devolve o resultado padronizado da operação.
 /// </summary>
     public async Task<UseCaseResult<Proceeding>> HandleAsync(CreateProceedingRequest request)
     {

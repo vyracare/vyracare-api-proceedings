@@ -6,13 +6,13 @@ using Vyracare.Api.Proceedings.Features.Proceedings.Shared.Ports;
 namespace Vyracare.Api.Proceedings.Tests.Proceedings.GetById;
 
 /// <summary>
-/// Agrupa os cen?rios de teste unit?rio relacionados a este componente.
+/// Representa o componente GetProceedingByIdHandlerTests da aplicação.
 /// </summary>
 public sealed class GetProceedingByIdHandlerTests
 {
     [Fact]
 /// <summary>
-/// Executa a responsabilidade associada a d ev e r et or na r n ot f ou nd q ua nd o p ro ce di me nt o n ao e xi st ir.
+/// Executa a responsabilidade do método D ev e_r et or na r_n ot_f ou nd_q ua nd o_p ro ce di me nt o_n ao_e xi st ir.
 /// </summary>
     public async Task Deve_retornar_not_found_quando_procedimento_nao_existir()
     {
@@ -26,7 +26,7 @@ public sealed class GetProceedingByIdHandlerTests
 
     [Fact]
 /// <summary>
-/// Executa a responsabilidade associada a d ev e r et or na r p ro ce di me nt o q ua nd o e le e xi st ir.
+/// Executa a responsabilidade do método D ev e_r et or na r_p ro ce di me nt o_q ua nd o_e le_e xi st ir.
 /// </summary>
     public async Task Deve_retornar_procedimento_quando_ele_existir()
     {
@@ -45,7 +45,7 @@ public sealed class GetProceedingByIdHandlerTests
         private readonly List<Proceeding> _items = [];
 
 /// <summary>
-/// Persiste um novo registro e devolve a entidade resultante da opera??o.
+/// Persiste um novo registro e devolve a entidade resultante da operação.
 /// </summary>
         public Task<Proceeding> AddAsync(Proceeding proceeding)
         {
@@ -55,12 +55,12 @@ public sealed class GetProceedingByIdHandlerTests
         }
 
 /// <summary>
-/// Recupera um registro espec?fico a partir do seu identificador.
+/// Recupera um registro específico a partir do identificador informado.
 /// </summary>
         public Task<Proceeding?> GetByIdAsync(string id) => Task.FromResult(_items.FirstOrDefault(item => item.Id == id));
 
 /// <summary>
-/// Recupera a cole??o de registros dispon?veis para esta feature.
+/// Recupera a coleção de registros disponíveis para a feature.
 /// </summary>
         public Task<IReadOnlyCollection<Proceeding>> ListAsync() => Task.FromResult<IReadOnlyCollection<Proceeding>>(_items);
     }

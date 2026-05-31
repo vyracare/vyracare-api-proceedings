@@ -6,14 +6,14 @@ using Vyracare.Api.Proceedings.Infrastructure.Persistence.Documents;
 namespace Vyracare.Api.Proceedings.Infrastructure.Persistence;
 
 /// <summary>
-/// Implementa a integra??o com a persist?ncia ou com uma depend?ncia externa da aplica??o.
+/// Implementa o acesso aos dados da feature usando a infraestrutura configurada.
 /// </summary>
 public sealed class MongoProceedingRepository : IProceedingRepository
 {
     private readonly IMongoCollection<ProceedingDocument> _collection;
 
 /// <summary>
-/// Inicializa uma nova inst?ncia de MongoProceedingRepository.
+/// Inicializa uma nova instância de MongoProceedingRepository.
 /// </summary>
     public MongoProceedingRepository(IMongoDatabase database)
     {
@@ -21,7 +21,7 @@ public sealed class MongoProceedingRepository : IProceedingRepository
     }
 
 /// <summary>
-/// Recupera a cole??o de registros dispon?veis para esta feature.
+/// Recupera a coleção de registros disponíveis para a feature.
 /// </summary>
     public async Task<IReadOnlyCollection<Proceeding>> ListAsync()
     {
@@ -30,7 +30,7 @@ public sealed class MongoProceedingRepository : IProceedingRepository
     }
 
 /// <summary>
-/// Recupera um registro espec?fico a partir do seu identificador.
+/// Recupera um registro específico a partir do identificador informado.
 /// </summary>
     public async Task<Proceeding?> GetByIdAsync(string id)
     {
@@ -39,7 +39,7 @@ public sealed class MongoProceedingRepository : IProceedingRepository
     }
 
 /// <summary>
-/// Persiste um novo registro e devolve a entidade resultante da opera??o.
+/// Persiste um novo registro e devolve a entidade resultante da operação.
 /// </summary>
     public async Task<Proceeding> AddAsync(Proceeding proceeding)
     {
