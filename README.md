@@ -1,182 +1,203 @@
 # vyracare-api-proceedings
 
-API .NET 8 responsavel pelo catalogo corporativo de procedimentos esteticos da plataforma Vyracare.
+## Visao geral
 
-## Objetivo
+Esta API e responsavel pelo catalogo de procedimentos esteticos da plataforma.
 
-O projeto centraliza o cadastro e a consulta de procedimentos esteticos usados pelas unidades da empresa. Hoje ele atende principalmente o fluxo do `vyracare-app-proceedings-mfe`, que utiliza esta API para:
+Ela atende principalmente o `vyracare-app-proceedings-mfe`, que precisa:
 
-- listar procedimentos cadastrados;
-- salvar novos procedimentos;
-- manter a URL de integracao sincronizada no frontend consumidor.
+- listar procedimentos;
+- consultar um procedimento especifico;
+- cadastrar novos procedimentos.
 
-## Stack
+---
 
-- .NET 8
-- ASP.NET Core Web API
-- AWS Lambda com HTTP API
-- MongoDB
-- Swagger
-- JWT Bearer Authentication
+## Como ler este projeto pela primeira vez
 
-## Arquitetura
+Leia nesta ordem:
 
-A estrutura atual do projeto esta organizada assim:
+1. [Program.cs](C:/Users/lenin/OneDrive/Desktop/GitHub/Vyracare/vyracare-api-proceedings/Program.cs)
+   Mostra configuracao de JWT, CORS, Swagger, Mongo e Lambda.
 
-- [Program.cs](c:/Users/lenin/OneDrive/Desktop/GitHub/Vyracare/vyracare-api-proceedings/Program.cs)
-  Configura MongoDB, CORS, JWT, Swagger e o hosting da Lambda.
+2. [ProceedingsController.cs](C:/Users/lenin/OneDrive/Desktop/GitHub/Vyracare/vyracare-api-proceedings/Features/Proceedings/ProceedingsController.cs)
+   Mostra as rotas disponiveis.
 
-- [Controllers/ProceedingsController.cs](c:/Users/lenin/OneDrive/Desktop/GitHub/Vyracare/vyracare-api-proceedings/Controllers/ProceedingsController.cs)
-  Expoe os endpoints HTTP do modulo de procedimentos.
+3. O caso de uso de criacao:
+   - [CreateProceedingRequest.cs](C:/Users/lenin/OneDrive/Desktop/GitHub/Vyracare/vyracare-api-proceedings/Features/Proceedings/Create/CreateProceedingRequest.cs)
+   - [CreateProceedingHandler.cs](C:/Users/lenin/OneDrive/Desktop/GitHub/Vyracare/vyracare-api-proceedings/Features/Proceedings/Create/CreateProceedingHandler.cs)
 
-- [Services/ProceedingsService.cs](c:/Users/lenin/OneDrive/Desktop/GitHub/Vyracare/vyracare-api-proceedings/Services/ProceedingsService.cs)
-  Implementa o acesso a collection `proceedings` no MongoDB.
+4. O caso de uso de leitura:
+   - [ListProceedingsHandler.cs](C:/Users/lenin/OneDrive/Desktop/GitHub/Vyracare/vyracare-api-proceedings/Features/Proceedings/List/ListProceedingsHandler.cs)
+   - [GetProceedingByIdHandler.cs](C:/Users/lenin/OneDrive/Desktop/GitHub/Vyracare/vyracare-api-proceedings/Features/Proceedings/GetById/GetProceedingByIdHandler.cs)
 
-- [DTOS/ProceedingsDto.cs](c:/Users/lenin/OneDrive/Desktop/GitHub/Vyracare/vyracare-api-proceedings/DTOS/ProceedingsDto.cs)
-  Define o contrato de entrada para criacao de procedimentos.
+5. A entidade e a porta:
+   - [Proceeding.cs](C:/Users/lenin/OneDrive/Desktop/GitHub/Vyracare/vyracare-api-proceedings/Features/Proceedings/Shared/Domain/Proceeding.cs)
+   - [IProceedingRepository.cs](C:/Users/lenin/OneDrive/Desktop/GitHub/Vyracare/vyracare-api-proceedings/Features/Proceedings/Shared/Ports/IProceedingRepository.cs)
 
-- [Models/ProceedingsModel.cs](c:/Users/lenin/OneDrive/Desktop/GitHub/Vyracare/vyracare-api-proceedings/Models/ProceedingsModel.cs)
-  Define o documento persistido no MongoDB.
+6. O adapter Mongo:
+   - [MongoProceedingRepository.cs](C:/Users/lenin/OneDrive/Desktop/GitHub/Vyracare/vyracare-api-proceedings/Infrastructure/Persistence/MongoProceedingRepository.cs)
 
-- [.vyracare/mfe-consumer.json](c:/Users/lenin/OneDrive/Desktop/GitHub/Vyracare/vyracare-api-proceedings/.vyracare/mfe-consumer.json)
-  Declara o frontend consumidor que deve ter a URL da API atualizada pela esteira de deploy.
+7. Os testes:
+   - [CreateProceedingHandlerTests.cs](C:/Users/lenin/OneDrive/Desktop/GitHub/Vyracare/vyracare-api-proceedings/Vyracare.Api.Proceedings.Tests/Proceedings/Create/CreateProceedingHandlerTests.cs)
+   - [GetProceedingByIdHandlerTests.cs](C:/Users/lenin/OneDrive/Desktop/GitHub/Vyracare/vyracare-api-proceedings/Vyracare.Api.Proceedings.Tests/Proceedings/GetById/GetProceedingByIdHandlerTests.cs)
 
-## Fluxo funcional
+---
 
-O fluxo principal hoje e:
+## Estrutura de pastas
 
-1. O `vyracare-app-proceedings-mfe` envia o formulario de cadastro.
-2. A API recebe um `CreateProceedingsRequest`.
-3. O controller converte o DTO em `ProceedingsModel`.
-4. O service persiste o documento no MongoDB.
-5. A API devolve o recurso criado com `201 Created`.
+### `Common`
+
+Contem elementos reaproveitados por toda a API:
+
+- options;
+- resultado de caso de uso;
+- extensoes HTTP;
+- abstração de tempo.
+
+### `Features/Proceedings`
+
+Cada pasta representa um caso de uso do dominio:
+
+- `Create`
+- `List`
+- `GetById`
+
+### `Features/Proceedings/Shared`
+
+Guarda:
+
+- entidade `Proceeding`;
+- interface `IProceedingRepository`.
+
+### `Infrastructure`
+
+Contem:
+
+- leitura de secrets;
+- DI;
+- repositorio Mongo;
+- documento Mongo;
+- implementacao concreta do relogio da aplicacao.
+
+### `Vyracare.Api.Proceedings.Tests`
+
+Projeto de testes unitarios para os handlers.
+
+---
+
+## Fluxo passo a passo de uma requisicao
+
+Vamos usar `POST /api/proceedings`.
+
+1. O frontend envia o formulario.
+2. O controller recebe o payload.
+3. O payload vira `CreateProceedingRequest`.
+4. O handler valida nome e demais campos obrigatorios.
+5. O handler monta a entidade `Proceeding`.
+6. O repositorio Mongo salva o documento.
+7. O controller devolve `201 Created`.
+
+Para leitura, o fluxo e similar:
+
+1. o controller recebe a rota;
+2. chama o handler;
+3. o handler consulta a porta;
+4. o repositorio Mongo devolve o dado;
+5. o controller transforma em HTTP.
+
+---
 
 ## Endpoints
 
-Base path publicada:
+Base path:
 
-`/api/proceedings`
+- `/api/proceedings`
 
-Endpoints disponiveis:
+Rotas:
 
 - `GET /api/proceedings`
-  Lista todos os procedimentos cadastrados.
-
 - `GET /api/proceedings/{id}`
-  Retorna um procedimento especifico pelo identificador.
-
 - `POST /api/proceedings`
-  Cria um novo procedimento.
 
-Payload esperado no `POST`:
+---
 
-```json
-{
-  "name": "Toxina botulinica premium",
-  "category": "Injetaveis",
-  "code": "INJ-001",
-  "targetArea": "Face",
-  "durationMinutes": 45,
-  "sessionPrice": 950,
-  "sessionCount": 1,
-  "recoveryTime": "24 horas",
-  "description": "Suavizacao de linhas dinamicas.",
-  "active": true
-}
-```
+## Seguranca e configuracao
 
-## Seguranca
+Todos os endpoints exigem JWT.
 
-Todos os endpoints exigem autenticacao JWT.
+Secrets padrao:
 
-Configuracoes relevantes:
+- `vyracare/shared/mongo`
+- `vyracare/shared/jwt-signing`
 
-- `Jwt:Key`
-- `Jwt:Issuer`
-- `Jwt:Audience`
-
-O Swagger tambem esta preparado para receber token Bearer.
-
-## Swagger
-
-Documentacao interativa:
-
-- `/swagger/index.html`
-
-Contrato OpenAPI:
-
-- `/swagger/v1/swagger.json`
-
-## Persistencia
-
-A API grava os dados na collection:
-
-- `proceedings`
-
-Banco padrao:
-
-- `vyracare_db`
-
-Campos principais persistidos:
-
-- `name`
-- `category`
-- `code`
-- `targetArea`
-- `durationMinutes`
-- `sessionPrice`
-- `sessionCount`
-- `recoveryTime`
-- `description`
-- `active`
-- `createdAt`
-- `updatedAt`
-
-## Configuracao
-
-Arquivo principal:
-
-- [appsettings.json](c:/Users/lenin/OneDrive/Desktop/GitHub/Vyracare/vyracare-api-proceedings/appsettings.json)
-
-Exemplo das configuracoes versionadas:
-
-- `Mongo:Database`
-- `Jwt:Issuer`
-- `Jwt:Audience`
-- `Secrets:MongoSecretName`
-- `Secrets:JwtSecretName`
-
-Variaveis de ambiente suportadas no deploy:
+Fallbacks:
 
 - `MONGO_URI`
-- `MONGO_SECRET_NAME`
-- `JWT_SECRET_NAME`
 - `JWT_KEY`
 - `JWT_ISSUER`
 - `JWT_AUDIENCE`
 - `CORS_ALLOWED_ORIGINS`
 
-## Integracao com o MFE consumidor
+Arquivo importante:
 
-Este projeto declara o `vyracare-app-proceedings-mfe` como consumidor em:
+- [SecretsManagerBootstrapper.cs](C:/Users/lenin/OneDrive/Desktop/GitHub/Vyracare/vyracare-api-proceedings/Infrastructure/SecretsManagerBootstrapper.cs)
 
-- [.vyracare/mfe-consumer.json](c:/Users/lenin/OneDrive/Desktop/GitHub/Vyracare/vyracare-api-proceedings/.vyracare/mfe-consumer.json)
+---
 
-Com isso, a esteira generica do deploy .NET consegue:
+## Integracao com o MFE
 
-- descobrir qual frontend deve ser atualizado;
-- atualizar `src/environments/environments.ts`;
-- atualizar `src/environments/environments.prod.ts`;
-- preencher a propriedade `apiUrl` com a URL publicada da API.
+O projeto declara o consumidor em:
+
+- [.vyracare/mfe-consumer.json](C:/Users/lenin/OneDrive/Desktop/GitHub/Vyracare/vyracare-api-proceedings/.vyracare/mfe-consumer.json)
+
+Isso permite que a esteira atualize a URL consumida pelo frontend apos o deploy.
+
+---
+
+## Testes unitarios
+
+### O que esta coberto hoje
+
+- validacao de nome obrigatorio;
+- criacao com sucesso;
+- busca por id inexistente;
+- busca por id existente.
+
+### Como rodar
+
+```bash
+dotnet restore
+dotnet build --no-restore
+dotnet test Vyracare.Api.Proceedings.Tests/Vyracare.Api.Proceedings.Tests.csproj --no-restore
+```
+
+### Como criar novos testes
+
+1. escolha um handler;
+2. crie fakes das portas;
+3. simule o comportamento esperado;
+4. teste retorno feliz e retorno de erro.
+
+---
+
+## Como adicionar um novo caso de uso
+
+Exemplo: `UpdateProceeding`.
+
+Passos:
+
+1. Criar `Features/Proceedings/Update`.
+2. Criar `UpdateProceedingRequest`.
+3. Criar `UpdateProceedingHandler`.
+4. Atualizar `IProceedingRepository`.
+5. Implementar o metodo em `MongoProceedingRepository`.
+6. Expor a rota no controller.
+7. Registrar o handler em `ServiceCollectionExtensions`.
+8. Escrever o teste unitario.
+
+---
 
 ## Execucao local
-
-Pre-requisitos:
-
-- .NET 8 SDK
-- acesso ao MongoDB
-
-Comandos:
 
 ```bash
 dotnet restore
@@ -184,18 +205,19 @@ dotnet build
 dotnet run
 ```
 
-## Deploy
+Swagger:
 
-Publicacao local:
+- `/swagger/index.html`
 
-```bash
-dotnet publish -c Release -o ./publish
-```
+---
 
-No GitHub Actions, o projeto depende da esteira reutilizavel do repositório de pipes .NET para:
+## Resumo para desenvolvedores
 
-- empacotar a Lambda;
-- publicar a API no API Gateway;
-- expor Swagger;
-- atualizar o MFE consumidor quando configurado.
-- ler credenciais de banco e chave JWT a partir do AWS Secrets Manager.
+O caminho mental e:
+
+- request entra no controller;
+- controller chama o handler;
+- handler aplica regra;
+- handler usa uma porta;
+- a infraestrutura implementa essa porta;
+- o teste valida o handler sem precisar subir o banco.

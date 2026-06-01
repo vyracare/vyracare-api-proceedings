@@ -3,27 +3,30 @@ using Amazon.Lambda.AspNetCoreServer.Hosting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using MongoDB.Driver;
-using System.Text;
+using Vyracare.Api.Proceedings.Common.Configuration;
 using Vyracare.Api.Proceedings.Infrastructure;
-using Vyracare.Api.Proceedings.Services;
+using Vyracare.Api.Proceedings.Infrastructure.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 await SecretsManagerBootstrapper.ApplyAsync(builder.Configuration);
 var configuration = builder.Configuration;
 
-var mongoUri = configuration["Mongo:ConnectionString"] ?? Environment.GetEnvironmentVariable("MONGO_URI") ?? "mongodb://localhost:27017";
-var mongoDatabase = configuration["Mongo:Database"] ?? "vyracare_db";
-var corsAllowedOriginsRaw = configuration["Cors:AllowedOrigins"] ?? Environment.GetEnvironmentVariable("CORS_ALLOWED_ORIGINS") ?? "*";
-var corsAllowedOrigins = corsAllowedOriginsRaw
+builder.Services.Configure<MongoOptions>(configuration.GetSection(MongoOptions.SectionName));
+builder.Services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
+builder.Services.Configure<CorsOptions>(configuration.GetSection(CorsOptions.SectionName));
+
+builder.Services.AddMongo();
+builder.Services.AddProceedingsCore();
+
+var jwtOptions = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>() ?? new JwtOptions();
+if (string.IsNullOrWhiteSpace(jwtOptions.Key))
+{
+    throw new InvalidOperationException("Jwt:Key nao configurado.");
+}
+
+var corsOptions = configuration.GetSection(CorsOptions.SectionName).Get<CorsOptions>() ?? new CorsOptions();
+var corsAllowedOrigins = (corsOptions.AllowedOrigins ?? "*")
     .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-
-var jwtKey = configuration["Jwt:Key"] ?? Environment.GetEnvironmentVariable("JWT_KEY") ?? throw new InvalidOperationException("Jwt:Key nao configurado.");
-var jwtIssuer = configuration["Jwt:Issuer"] ?? Environment.GetEnvironmentVariable("JWT_ISSUER") ?? "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_yZNKvAZTf";
-var jwtAudience = configuration["Jwt:Audience"] ?? Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? "424aitrab2nma4ttgi0314dfst";
-
-builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(mongoUri));
-builder.Services.AddScoped(sp => sp.GetRequiredService<IMongoClient>().GetDatabase(mongoDatabase));
 
 builder.Services.AddCors(options =>
 {
@@ -53,9 +56,9 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtIssuer,
-        ValidAudience = jwtAudience,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+        ValidIssuer = jwtOptions.Issuer,
+        ValidAudience = jwtOptions.Audience,
+        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(jwtOptions.Key))
     };
 });
 
@@ -68,7 +71,7 @@ builder.Services.AddSwaggerGen(options =>
     {
         Title = "vyracare-api-proceedings",
         Version = "v1",
-        Description = "API responsável por administrar os procedimentos"
+        Description = "API responsavel por administrar os procedimentos esteticos da plataforma."
     });
 
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -96,9 +99,8 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
-builder.Services.AddAWSLambdaHosting(LambdaEventSource.HttpApi);
 
-builder.Services.AddScoped<ProceedingsService>();
+builder.Services.AddAWSLambdaHosting(LambdaEventSource.HttpApi);
 
 var app = builder.Build();
 
