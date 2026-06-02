@@ -3,6 +3,7 @@
     "repositoryFullName": "vyracare/vyracare-app-proceedings-mfe",
     "environmentFiles": [
       "src/environments/environments.ts",
+      "src/environments/environments.hml.ts",
       "src/environments/environments.prod.ts"
     ],
     "apiUrlProperty": "apiUrl"
