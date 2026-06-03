@@ -223,3 +223,13 @@ O caminho mental e:
 - handler usa uma porta;
 - a infraestrutura implementa essa porta;
 - o teste valida o handler sem precisar subir o banco.
+
+## Convencao de commits
+
+Os commits deste repositorio devem ser escritos em portugues.
+
+Padrao recomendado:
+
+- `feat: adiciona cadastro de procedimento`
+- `fix: corrige persistencia de procedimento no mongo`
+- `docs: atualiza explicacao do fluxo da api proceedings`
