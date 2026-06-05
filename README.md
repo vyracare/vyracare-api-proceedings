@@ -73,7 +73,7 @@ Guarda:
 
 Contem:
 
-- leitura de secrets;
+- leitura de parametros seguros;
 - DI;
 - repositorio Mongo;
 - documento Mongo;
@@ -125,11 +125,13 @@ Rotas:
 
 Todos os endpoints exigem JWT.
 
-Secrets padrao:
+Parametros padrao:
 
 - `vyracare/shared/mongo-prod`
+- `vyracare/shared/mongo-hml`
 - `vyracare/shared/mongo-dev`
 - `vyracare/shared/jwt-signing-prod`
+- `vyracare/shared/jwt-signing-hml`
 - `vyracare/shared/jwt-signing-dev`
 
 Fallbacks:
@@ -142,7 +144,7 @@ Fallbacks:
 
 Arquivo importante:
 
-- [SecretsManagerBootstrapper.cs](C:/Users/lenin/OneDrive/Desktop/GitHub/Vyracare/vyracare-api-proceedings/Infrastructure/SecretsManagerBootstrapper.cs)
+- [ParameterStoreBootstrapper.cs](C:/Users/lenin/OneDrive/Desktop/GitHub/Vyracare/vyracare-api-proceedings/Infrastructure/ParameterStoreBootstrapper.cs)
 
 ---
 
