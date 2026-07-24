@@ -8,7 +8,7 @@ using Vyracare.Api.Proceedings.Infrastructure;
 using Vyracare.Api.Proceedings.Infrastructure.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
-await SecretsManagerBootstrapper.ApplyAsync(builder.Configuration);
+await ParameterStoreBootstrapper.ApplyAsync(builder.Configuration);
 var configuration = builder.Configuration;
 
 builder.Services.Configure<MongoOptions>(configuration.GetSection(MongoOptions.SectionName));
@@ -114,6 +114,11 @@ app.UseHttpsRedirection();
 app.UseCors("DefaultCors");
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapGet("/health", () => Results.Ok(new
+{
+    status = "ok",
+    service = "vyracare-api-proceedings"
+})).AllowAnonymous();
 app.MapControllers().RequireAuthorization();
 
 app.Run();
