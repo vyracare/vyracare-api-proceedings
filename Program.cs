@@ -114,6 +114,11 @@ app.UseHttpsRedirection();
 app.UseCors("DefaultCors");
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapGet("/health", () => Results.Ok(new
+{
+    status = "ok",
+    service = "vyracare-api-proceedings"
+})).AllowAnonymous();
 app.MapControllers().RequireAuthorization();
 
 app.Run();
