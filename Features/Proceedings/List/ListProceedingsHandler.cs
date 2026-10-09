@@ -22,9 +22,13 @@ public sealed class ListProceedingsHandler
 /// <summary>
 /// Executa o caso de uso e devolve o resultado padronizado da operação.
 /// </summary>
-    public async Task<UseCaseResult<IReadOnlyCollection<Proceeding>>> HandleAsync()
+    public async Task<UseCaseResult<IReadOnlyCollection<Proceeding>>> HandleAsync(
+        string? search = null,
+        bool activeOnly = false,
+        int? limit = null)
     {
-        var items = await _repository.ListAsync();
+        int? normalizedLimit = limit.HasValue ? Math.Clamp(limit.Value, 1, 50) : null;
+        var items = await _repository.ListAsync(search, activeOnly, normalizedLimit);
         return UseCaseResult<IReadOnlyCollection<Proceeding>>.Success(items);
     }
 }
