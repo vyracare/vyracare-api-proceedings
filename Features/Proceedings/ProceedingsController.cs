@@ -17,9 +17,13 @@ public sealed class ProceedingsController : ControllerBase
 /// <summary>
 /// Executa a responsabilidade do método G et Al l.
 /// </summary>
-    public async Task<IActionResult> GetAll([FromServices] ListProceedingsHandler handler)
+    public async Task<IActionResult> GetAll(
+        [FromQuery] string? search,
+        [FromQuery] bool activeOnly,
+        [FromQuery] int? limit,
+        [FromServices] ListProceedingsHandler handler)
     {
-        var result = await handler.HandleAsync();
+        var result = await handler.HandleAsync(search, activeOnly, limit);
         return this.ToActionResult(result, Ok);
     }
 
