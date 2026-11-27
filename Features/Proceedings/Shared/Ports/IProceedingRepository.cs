@@ -7,7 +7,7 @@ namespace Vyracare.Api.Proceedings.Features.Proceedings.Shared.Ports;
 /// </summary>
 public interface IProceedingRepository
 {
-    Task<IReadOnlyCollection<Proceeding>> ListAsync();
+    Task<IReadOnlyCollection<Proceeding>> ListAsync(string? search = null, bool activeOnly = false, int? limit = null);
     Task<Proceeding?> GetByIdAsync(string id);
     Task<Proceeding> AddAsync(Proceeding proceeding);
 }

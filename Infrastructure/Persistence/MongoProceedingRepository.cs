@@ -1,4 +1,6 @@
 using MongoDB.Driver;
+using Vyracare.Api.Proceedings.Common.Tenancy;
+using System.Text.RegularExpressions;
 using Vyracare.Api.Proceedings.Features.Proceedings.Shared.Domain;
 using Vyracare.Api.Proceedings.Features.Proceedings.Shared.Ports;
 using Vyracare.Api.Proceedings.Infrastructure.Persistence.Documents;
@@ -11,21 +13,48 @@ namespace Vyracare.Api.Proceedings.Infrastructure.Persistence;
 public sealed class MongoProceedingRepository : IProceedingRepository
 {
     private readonly IMongoCollection<ProceedingDocument> _collection;
+    private readonly string _tenantId;
 
 /// <summary>
 /// Inicializa uma nova instância de MongoProceedingRepository.
 /// </summary>
-    public MongoProceedingRepository(IMongoDatabase database)
+    public MongoProceedingRepository(IMongoDatabase database, ITenantContext tenantContext)
     {
+        _tenantId = tenantContext.TenantId;
         _collection = database.GetCollection<ProceedingDocument>("proceedings");
     }
 
 /// <summary>
 /// Recupera a coleção de registros disponíveis para a feature.
 /// </summary>
-    public async Task<IReadOnlyCollection<Proceeding>> ListAsync()
+    public async Task<IReadOnlyCollection<Proceeding>> ListAsync(
+        string? search = null,
+        bool activeOnly = false,
+        int? limit = null)
     {
-        var documents = await _collection.Find(Builders<ProceedingDocument>.Filter.Empty).ToListAsync();
+        var filter = Builders<ProceedingDocument>.Filter.Eq(item => item.TenantId, _tenantId);
+        if (activeOnly)
+        {
+            filter &= Builders<ProceedingDocument>.Filter.Eq(item => item.Active, true);
+        }
+
+        var normalizedSearch = search?.Trim();
+        if (!string.IsNullOrWhiteSpace(normalizedSearch))
+        {
+            var expression = new MongoDB.Bson.BsonRegularExpression(Regex.Escape(normalizedSearch), "i");
+            filter &= Builders<ProceedingDocument>.Filter.Or(
+                Builders<ProceedingDocument>.Filter.Regex(item => item.Name, expression),
+                Builders<ProceedingDocument>.Filter.Regex(item => item.Code, expression));
+        }
+
+        IFindFluent<ProceedingDocument, ProceedingDocument> query =
+            _collection.Find(filter).SortBy(item => item.Name);
+        if (limit.HasValue)
+        {
+            query = query.Limit(Math.Clamp(limit.Value, 1, 50));
+        }
+
+        var documents = await query.ToListAsync();
         return documents.Select(MapToDomain).ToArray();
     }
 
@@ -34,7 +63,7 @@ public sealed class MongoProceedingRepository : IProceedingRepository
 /// </summary>
     public async Task<Proceeding?> GetByIdAsync(string id)
     {
-        var document = await _collection.Find(item => item.Id == id).FirstOrDefaultAsync();
+        var document = await _collection.Find(item => item.TenantId == _tenantId && item.Id == id).FirstOrDefaultAsync();
         return document is null ? null : MapToDomain(document);
     }
 
@@ -44,6 +73,7 @@ public sealed class MongoProceedingRepository : IProceedingRepository
     public async Task<Proceeding> AddAsync(Proceeding proceeding)
     {
         var document = MapToDocument(proceeding);
+        document.TenantId = _tenantId;
         await _collection.InsertOneAsync(document);
         proceeding.Id = document.Id;
         return proceeding;

@@ -65,7 +65,8 @@ public sealed class CreateProceedingHandlerTests
 /// <summary>
 /// Recupera a coleção de registros disponíveis para a feature.
 /// </summary>
-        public Task<IReadOnlyCollection<Proceeding>> ListAsync() => Task.FromResult<IReadOnlyCollection<Proceeding>>(Items);
+        public Task<IReadOnlyCollection<Proceeding>> ListAsync(string? search = null, bool activeOnly = false, int? limit = null) =>
+            Task.FromResult<IReadOnlyCollection<Proceeding>>(Items);
     }
 
     private sealed class FixedClock : IClock

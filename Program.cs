@@ -1,6 +1,7 @@
 using Amazon.Lambda.AspNetCoreServer;
 using Amazon.Lambda.AspNetCoreServer.Hosting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Vyracare.Api.Proceedings.Common.Tenancy;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Vyracare.Api.Proceedings.Common.Configuration;
@@ -17,6 +18,8 @@ builder.Services.Configure<CorsOptions>(configuration.GetSection(CorsOptions.Sec
 
 builder.Services.AddMongo();
 builder.Services.AddProceedingsCore();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ITenantContext, HttpTenantContext>();
 
 var jwtOptions = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>() ?? new JwtOptions();
 if (string.IsNullOrWhiteSpace(jwtOptions.Key))
@@ -113,6 +116,7 @@ app.UseSwaggerUI(options =>
 app.UseHttpsRedirection();
 app.UseCors("DefaultCors");
 app.UseAuthentication();
+app.UseMiddleware<TenantContextMiddleware>();
 app.UseAuthorization();
 app.MapGet("/health", () => Results.Ok(new
 {

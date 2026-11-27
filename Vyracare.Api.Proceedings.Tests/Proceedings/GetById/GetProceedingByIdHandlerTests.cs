@@ -62,6 +62,7 @@ public sealed class GetProceedingByIdHandlerTests
 /// <summary>
 /// Recupera a coleção de registros disponíveis para a feature.
 /// </summary>
-        public Task<IReadOnlyCollection<Proceeding>> ListAsync() => Task.FromResult<IReadOnlyCollection<Proceeding>>(_items);
+        public Task<IReadOnlyCollection<Proceeding>> ListAsync(string? search = null, bool activeOnly = false, int? limit = null) =>
+            Task.FromResult<IReadOnlyCollection<Proceeding>>(_items);
     }
 }
