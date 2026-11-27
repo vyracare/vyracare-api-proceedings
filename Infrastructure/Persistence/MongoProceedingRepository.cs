@@ -1,4 +1,5 @@
 using MongoDB.Driver;
+using Vyracare.Api.Proceedings.Common.Tenancy;
 using System.Text.RegularExpressions;
 using Vyracare.Api.Proceedings.Features.Proceedings.Shared.Domain;
 using Vyracare.Api.Proceedings.Features.Proceedings.Shared.Ports;
@@ -12,12 +13,14 @@ namespace Vyracare.Api.Proceedings.Infrastructure.Persistence;
 public sealed class MongoProceedingRepository : IProceedingRepository
 {
     private readonly IMongoCollection<ProceedingDocument> _collection;
+    private readonly string _tenantId;
 
 /// <summary>
 /// Inicializa uma nova instância de MongoProceedingRepository.
 /// </summary>
-    public MongoProceedingRepository(IMongoDatabase database)
+    public MongoProceedingRepository(IMongoDatabase database, ITenantContext tenantContext)
     {
+        _tenantId = tenantContext.TenantId;
         _collection = database.GetCollection<ProceedingDocument>("proceedings");
     }
 
@@ -29,7 +32,7 @@ public sealed class MongoProceedingRepository : IProceedingRepository
         bool activeOnly = false,
         int? limit = null)
     {
-        var filter = Builders<ProceedingDocument>.Filter.Empty;
+        var filter = Builders<ProceedingDocument>.Filter.Eq(item => item.TenantId, _tenantId);
         if (activeOnly)
         {
             filter &= Builders<ProceedingDocument>.Filter.Eq(item => item.Active, true);
@@ -60,7 +63,7 @@ public sealed class MongoProceedingRepository : IProceedingRepository
 /// </summary>
     public async Task<Proceeding?> GetByIdAsync(string id)
     {
-        var document = await _collection.Find(item => item.Id == id).FirstOrDefaultAsync();
+        var document = await _collection.Find(item => item.TenantId == _tenantId && item.Id == id).FirstOrDefaultAsync();
         return document is null ? null : MapToDomain(document);
     }
 
@@ -70,6 +73,7 @@ public sealed class MongoProceedingRepository : IProceedingRepository
     public async Task<Proceeding> AddAsync(Proceeding proceeding)
     {
         var document = MapToDocument(proceeding);
+        document.TenantId = _tenantId;
         await _collection.InsertOneAsync(document);
         proceeding.Id = document.Id;
         return proceeding;

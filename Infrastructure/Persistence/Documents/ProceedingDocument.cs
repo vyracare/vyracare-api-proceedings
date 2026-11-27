@@ -8,6 +8,9 @@ namespace Vyracare.Api.Proceedings.Infrastructure.Persistence.Documents;
 /// </summary>
 public sealed class ProceedingDocument
 {
+    [BsonElement("tenantId")]
+    public string TenantId { get; set; } = string.Empty;
+
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
 /// <summary>
