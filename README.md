@@ -15,6 +15,8 @@ Runtime atual da aplicacao:
 - `TargetFramework`: `net10.0`
 - runtime AWS Lambda: `dotnet10`
 
+Para a promocao do isolamento por empresa, `scripts/inventory-legacy-proceedings.js` permite inventariar documentos legados com `mongosh`, sem alterar o banco. O procedimento operacional e os limites do mapeamento estao documentados em `vyracare-spec-driven/03-delivery/procedimentos-inventario-legado.md`.
+
 ---
 
 ## Como ler este projeto pela primeira vez
